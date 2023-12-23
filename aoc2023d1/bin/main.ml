@@ -1,19 +1,6 @@
 open Base
 open Stdio
 
-let find_all_indices line word =
-  let rec find_all_indices' line word acc curr_index =
-    match String.substr_index line ~pattern:word with
-    | None -> acc
-    | Some index ->
-        let new_index = index + curr_index in
-        find_all_indices'
-          (String.drop_prefix line (new_index + 1))
-          word (new_index :: acc)
-          (curr_index + new_index + 1)
-  in
-  find_all_indices' line word [] 0 |> List.rev
-
 let word_and_digit =
   [
     ("zero", 0);
@@ -38,19 +25,26 @@ let word_and_digit =
     ("0", 0);
   ]
 
+let find_all_indices line word =
+  let rec find_all_indices' line word acc curr_index =
+    match String.substr_index line ~pattern:word with
+    | None -> acc
+    | Some index ->
+        let new_index = index + curr_index in
+        find_all_indices'
+          (String.drop_prefix line (new_index + 1))
+          word (new_index :: acc)
+          (curr_index + new_index + 1)
+  in
+  find_all_indices' line word [] 0 |> List.rev
+
 let find_all_numbers_and_their_indices line =
-  let res =
-    List.map word_and_digit ~f:(fun (word, digit) ->
-        (digit, find_all_indices line word))
-  in
-  let nonempty =
-    List.filter res ~f:(fun (_, indices) -> not (List.is_empty indices))
-  in
-  let merged =
-    List.map nonempty ~f:(fun (digit, indices) ->
-        List.map indices ~f:(fun index -> (digit, index)))
-  in
-  List.concat merged
+  List.map word_and_digit ~f:(fun (word, digit) ->
+      (digit, find_all_indices line word))
+  |> List.filter ~f:(fun (_, indices) -> not (List.is_empty indices))
+  |> List.map ~f:(fun (digit, indices) ->
+         List.map indices ~f:(fun index -> (digit, index)))
+  |> List.concat
   |> List.sort ~compare:(fun (_, i1) (_, i2) -> Int.compare i1 i2)
 
 let first_and_last lst =
@@ -77,8 +71,6 @@ let read_all_lines channel =
     | Some line -> read_all_lines' channel (line :: acc)
   in
   read_all_lines' channel [] |> List.rev
-
-(* let lines = [ "123onetwothreeseven"; "onetwothreefourfivesixseven" ] *)
 
 let () =
   In_channel.create "data" |> read_all_lines |> List.map ~f:parse_line
