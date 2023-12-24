@@ -49,8 +49,8 @@ let max_count_for_each_color_in game =
   let blue = max_count_for_color Blue in
   (red, green, blue)
 
-let counts_are_possible tuple =
-  let red, green, blue = tuple in
+let counts_are_possible counts =
+  let red, green, blue = counts in
   let red_is_possible = red <= 12 in
   let green_is_possible = green <= 13 in
   let blue_is_possible = blue <= 14 in
@@ -66,9 +66,16 @@ let read_file_all_lines file =
   read_all_lines' channel [] |> List.rev
 
 let () =
+  (* pt 1 *)
   let all_lines = read_file_all_lines "data" in
   all_lines |> List.map ~f:extract_game
   |> List.filter ~f:(fun game ->
          max_count_for_each_color_in game |> counts_are_possible)
   |> List.map ~f:(fun game -> game.game_number)
+  |> List.fold ~init:0 ~f:( + ) |> printf "%d\n";
+  (* pt 2 *)
+  let all_lines = read_file_all_lines "data" in
+  all_lines |> List.map ~f:extract_game
+  |> List.map ~f:max_count_for_each_color_in
+  |> List.map ~f:(fun (red, green, blue) -> red * green * blue)
   |> List.fold ~init:0 ~f:( + ) |> printf "%d\n"
