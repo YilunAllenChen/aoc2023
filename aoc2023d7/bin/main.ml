@@ -20,7 +20,7 @@ let char_to_card = function
   | 'T' -> Ten
   | c -> Number (Int.of_string @@ String.of_char c)
 
-let card_to_int_2 = function
+let card_to_int_with_joker = function
   | Ace -> 14
   | King -> 13
   | Queen -> 12
@@ -136,6 +136,6 @@ let () =
   (* part 2 *)
   hands
   |> List.sort ~compare:(fun hand1 hand2 ->
-         sort_hands ~scoring_fun:score_with_joker ~ctoi:card_to_int_2 hand1 hand2)
+         sort_hands ~scoring_fun:score_with_joker ~ctoi:card_to_int_with_joker hand1 hand2)
   |> List.mapi ~f:(fun i hand -> earning hand (i + 1))
   |> List.fold ~init:0 ~f:( + ) |> printf "pt2: %d\n"
