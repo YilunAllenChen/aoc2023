@@ -1,0 +1,6 @@
+(executables
+ (public_names aoc2023d6pt1 aoc2023d6pt2)
+ (names pt1 pt2)
+ (libraries base stdio core re2 str)
+ (preprocess (pps ppx_sexp_conv))
+ )
