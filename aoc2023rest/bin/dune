@@ -1,0 +1,6 @@
+(executable
+ (public_name aoc2023rest)
+ (name main)
+ (libraries aoc2023rest base stdio core re2 str)
+ (preprocess
+  (pps ppx_sexp_conv)))
